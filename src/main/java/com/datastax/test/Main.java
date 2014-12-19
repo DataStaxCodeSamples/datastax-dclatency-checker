@@ -6,6 +6,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 
 /**
  */
@@ -16,7 +17,10 @@ public class Main {
 		String localDC = PropertyHelper.getProperty("localdc", "Cassandra");
 		String remoteDC = PropertyHelper.getProperty("remotedc", "Analytics");
 		
-		Cluster cluster = Cluster.builder().addContactPoints(contactPointsStr.split(",")).build();
+		Cluster cluster = Cluster.builder().addContactPoints(contactPointsStr.split(","))
+				.withLoadBalancingPolicy(new DCAwareRoundRobinPolicy(localDC))
+				.build();
+		
 		Session session = cluster.connect();
 		
 		//Create keyspace and table 
