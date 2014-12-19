@@ -49,6 +49,9 @@ public class Main {
 		long localTotal = 0;
 		long remoteTotal = 0;
 		
+		MovingAverage localMA = new MovingAverage(20);
+		MovingAverage remoteMA = new MovingAverage(20);
+		
 		while (true){
 			
 			Timer local = new Timer();
@@ -64,11 +67,12 @@ public class Main {
 			long remoteWrite = remote.getTimeTakenMillis();
 			
 			counter++;
-			localTotal = localWrite + localTotal;
-			remoteTotal = remoteWrite + remoteTotal;
 			
-			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + ((localTotal)/counter) 
-					+ " Average Remote " + ((remoteTotal)/counter));
+			localMA.newNum(localWrite);
+			remoteMA.newNum(remoteWrite);
+			
+			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + localMA.getAvg() 
+					+ " Average Remote " + remoteMA.getAvg());
 	
 			try {
 				Thread.sleep(1000);
