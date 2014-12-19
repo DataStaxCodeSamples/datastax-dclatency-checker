@@ -45,10 +45,6 @@ public class Main {
 		stmtLocal.setConsistencyLevel(ConsistencyLevel.ONE);
 		stmtRemote.setConsistencyLevel(ConsistencyLevel.ONE);
 
-		int counter = 0;
-		long localTotal = 0;
-		long remoteTotal = 0;
-
 		MovingAverage localMA = new MovingAverage(20);
 		MovingAverage remoteMA = new MovingAverage(20);
 
@@ -58,11 +54,11 @@ public class Main {
 
 			try {
 				local.start();
-				session.execute(stmtLocal.bind("" + System.currentTimeMillis()));
+				session.execute(stmtLocal.bind("" + System.currentTimeMillis()%10));
 				local.end();
 
 				remote.start();
-				session.execute(stmtRemote.bind("" + System.currentTimeMillis()));
+				session.execute(stmtRemote.bind("" + System.currentTimeMillis()%10));
 				remote.end();
 				
 			} catch (WriteTimeoutException e) {
