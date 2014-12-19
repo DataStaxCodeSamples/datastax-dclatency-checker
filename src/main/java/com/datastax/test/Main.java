@@ -24,19 +24,26 @@ public class Main {
 		Session session = cluster.connect();
 		
 		//Create keyspace and table 
-		String createKeyspace = "create KEYSPACE if not exists datastax_testing WITH replication = {'class': 'NetworkTopologyStrategy', "
-				+ "'"+ localDC + "': 1, '" + remoteDC + "': 1};";
-		String createTable = "create table if not exists datastax_testing.latency (id text PRIMARY KEY)";
+		String createKeyspaceLocal = "create KEYSPACE if not exists datastax_testing_local WITH replication = {'class': 'NetworkTopologyStrategy', "
+				+ "'"+ localDC + "': 1 };";
+		String createKeyspaceRemote = "create KEYSPACE if not exists datastax_testing_remote WITH replication = {'class': 'NetworkTopologyStrategy', "
+				+ "'"+ remoteDC + "': 1 };";
+		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY)";
+		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY)";
 
-		String INSERT = "insert into datastax_testing.latency (id) values (?)";   
+		String INSERT_LOCAL = "insert into datastax_testing_local.latency (id) values (?)";
+		String INSERT_REMOTE = "insert into datastax_testing_remote.latency (id) values (?)";
 						
-		session.execute(createKeyspace);
-		session.execute(createTable);
+		session.execute(createKeyspaceLocal);
+		session.execute(createTableLocal);
+		session.execute(createKeyspaceRemote);
+		session.execute(createTableRemote);
 		
-		PreparedStatement stmtLocal = session.prepare(INSERT);
-		PreparedStatement stmtRemote = session.prepare(INSERT);
+		PreparedStatement stmtLocal = session.prepare(INSERT_LOCAL);
+		PreparedStatement stmtRemote = session.prepare(INSERT_REMOTE);
+		
 		stmtLocal.setConsistencyLevel(ConsistencyLevel.ONE);
-		stmtRemote.setConsistencyLevel(ConsistencyLevel.QUORUM);
+		stmtRemote.setConsistencyLevel(ConsistencyLevel.ONE);
 
 		int counter = 0;
 		long localTotal = 0;
