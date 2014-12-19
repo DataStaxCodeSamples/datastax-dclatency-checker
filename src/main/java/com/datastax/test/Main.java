@@ -66,7 +66,6 @@ public class Main {
 				continue;
 			}
 
-			counter++;
 			long localWrite = local.getTimeTakenMillis();
 			long remoteWrite = remote.getTimeTakenMillis();
 
