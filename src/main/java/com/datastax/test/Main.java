@@ -50,7 +50,7 @@ public class Main {
 			remote.start();
 			session.execute(stmtRemote.bind("" + System.currentTimeMillis()));
 			remote.end();
-			long remoteWrite = local.getTimeTakenMillis();
+			long remoteWrite = remote.getTimeTakenMillis();
 			
 			counter++;
 			localTotal = localWrite + localTotal;
