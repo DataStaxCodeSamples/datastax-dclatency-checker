@@ -35,6 +35,8 @@ public class Main {
 		stmtRemote.setConsistencyLevel(ConsistencyLevel.QUORUM);
 
 		int counter = 0;
+		long localTotal = 0;
+		long remoteTotal = 0;
 		
 		while (true){
 			
@@ -51,8 +53,11 @@ public class Main {
 			long remoteWrite = local.getTimeTakenMillis();
 			
 			counter++;
-			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + ((localWrite+=localWrite)/counter) 
-					+ " Average Remote " + ((remoteWrite+=remoteWrite)/counter));
+			localTotal = localWrite + localTotal;
+			remoteTotal = remoteWrite + remoteTotal;
+			
+			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + ((localTotal)/counter) 
+					+ " Average Remote " + ((remoteTotal)/counter));
 	
 			try {
 				Thread.sleep(1000);
