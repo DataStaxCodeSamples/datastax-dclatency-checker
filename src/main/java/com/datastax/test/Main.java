@@ -51,8 +51,8 @@ public class Main {
 			long remoteWrite = local.getTimeTakenMillis();
 			
 			counter++;
-			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + (localWrite/counter) 
-					+ " Average Remote " + (remoteWrite/counter));
+			System.out.println("Local :" + localWrite + "ms Remote :" + remoteWrite + "ms Average local " + (localWrite+=localWrite/counter) 
+					+ " Average Remote " + (remoteWrite+=remoteWrite/counter));
 	
 			try {
 				Thread.sleep(1000);
