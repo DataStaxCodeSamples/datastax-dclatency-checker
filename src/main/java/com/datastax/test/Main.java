@@ -33,7 +33,7 @@ public class Main {
 		String createKeyspaceRemote = "create KEYSPACE if not exists datastax_testing_remote WITH replication = {'class': 'NetworkTopologyStrategy', "
 				+ "'" + remoteDC + "': 1 };";
 		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY) WITH default_time_to_live = 25;";
-		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY) default_time_to_live = 25;";
+		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY) WITH default_time_to_live = 25;";
 
 		String INSERT_LOCAL = "insert into datastax_testing_local.latency (id) values (?)";
 		String INSERT_REMOTE = "insert into datastax_testing_remote.latency (id) values (?)";
