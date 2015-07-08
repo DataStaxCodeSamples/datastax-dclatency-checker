@@ -19,10 +19,13 @@ public class Main {
 
 	public Main() {
 		String contactPointsStr = PropertyHelper.getProperty("contactPoints", "localhost");
+		String pauseInSeconds = PropertyHelper.getProperty("pauseInSeconds", "1");
 		String FILE_NAME = PropertyHelper.getProperty("file", "smallfile1K");
 		String localDC = PropertyHelper.getProperty("localdc", "Cassandra");
 		String remoteDC = PropertyHelper.getProperty("remotedc", "Analytics");
 
+		int PAUSE_TIME = new Integer(pauseInSeconds).intValue();
+		
 		Cluster cluster = Cluster.builder().addContactPoints(contactPointsStr.split(","))
 				.withLoadBalancingPolicy(new DCAwareRoundRobinPolicy(localDC)).build();
 
@@ -91,7 +94,7 @@ public class Main {
 					+ localMA.getAvg() + " Average Remote " + remoteMA.getAvg());
 
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(PAUSE_TIME*1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
