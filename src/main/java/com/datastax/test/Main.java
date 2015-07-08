@@ -1,5 +1,8 @@
 package com.datastax.test;
 
+import java.io.UnsupportedEncodingException;
+
+import com.datastax.demo.utils.FileUtils;
 import com.datastax.demo.utils.PropertyHelper;
 import com.datastax.demo.utils.Timer;
 import com.datastax.driver.core.Cluster;
@@ -8,6 +11,7 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.WriteTimeoutException;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
+import com.google.common.io.BaseEncoding;
 
 /**
  */
@@ -28,8 +32,8 @@ public class Main {
 				+ "'" + localDC + "': 1 };";
 		String createKeyspaceRemote = "create KEYSPACE if not exists datastax_testing_remote WITH replication = {'class': 'NetworkTopologyStrategy', "
 				+ "'" + remoteDC + "': 1 };";
-		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY)";
-		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY)";
+		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY) WITH default_time_to_live = 25;";
+		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY) default_time_to_live = 25;";
 
 		String INSERT_LOCAL = "insert into datastax_testing_local.latency (id) values (?)";
 		String INSERT_REMOTE = "insert into datastax_testing_remote.latency (id) values (?)";
@@ -47,6 +51,16 @@ public class Main {
 
 		MovingAverage localMA = new MovingAverage(20);
 		MovingAverage remoteMA = new MovingAverage(20);
+		
+		
+		String inputContent = FileUtils.readFileIntoString("solr.pdf");
+		String base64String = "";
+		try {
+			base64String = BaseEncoding.base64().encode(inputContent.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			System.exit(1);
+		}
 
 		while (true) {
 			Timer local = new Timer();
@@ -54,11 +68,11 @@ public class Main {
 
 			try {
 				local.start();
-				session.execute(stmtLocal.bind("" + System.currentTimeMillis()%10));
+				session.execute(stmtLocal.bind(base64String));
 				local.end();
 
 				remote.start();
-				session.execute(stmtRemote.bind("" + System.currentTimeMillis()%10));
+				session.execute(stmtRemote.bind(base64String));
 				remote.end();
 				
 			} catch (WriteTimeoutException e) {
@@ -76,7 +90,7 @@ public class Main {
 					+ localMA.getAvg() + " Average Remote " + remoteMA.getAvg());
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
