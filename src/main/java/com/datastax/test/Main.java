@@ -32,11 +32,11 @@ public class Main {
 				+ "'" + localDC + "': 1 };";
 		String createKeyspaceRemote = "create KEYSPACE if not exists datastax_testing_remote WITH replication = {'class': 'NetworkTopologyStrategy', "
 				+ "'" + remoteDC + "': 1 };";
-		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY) WITH default_time_to_live = 25;";
-		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY) WITH default_time_to_live = 25;";
+		String createTableLocal = "create table if not exists datastax_testing_local.latency (id text PRIMARY KEY, value text) WITH default_time_to_live = 25;";
+		String createTableRemote = "create table if not exists datastax_testing_remote.latency (id text PRIMARY KEY, value text) WITH default_time_to_live = 25;";
 
-		String INSERT_LOCAL = "insert into datastax_testing_local.latency (id) values (?)";
-		String INSERT_REMOTE = "insert into datastax_testing_remote.latency (id) values (?)";
+		String INSERT_LOCAL = "insert into datastax_testing_local.latency (id, value) values (?,?)";
+		String INSERT_REMOTE = "insert into datastax_testing_remote.latency (id, value) values (?,?)";
 
 		session.execute(createKeyspaceLocal);
 		session.execute(createTableLocal);
@@ -68,11 +68,11 @@ public class Main {
 
 			try {
 				local.start();
-				session.execute(stmtLocal.bind(base64String));
+				session.execute(stmtLocal.bind("id", base64String));
 				local.end();
 
 				remote.start();
-				session.execute(stmtRemote.bind(base64String));
+				session.execute(stmtRemote.bind("id", base64String));
 				remote.end();
 				
 			} catch (WriteTimeoutException e) {
