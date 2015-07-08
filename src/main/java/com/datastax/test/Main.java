@@ -19,6 +19,7 @@ public class Main {
 
 	public Main() {
 		String contactPointsStr = PropertyHelper.getProperty("contactPoints", "localhost");
+		String FILE_NAME = PropertyHelper.getProperty("file", "smallfile1K");
 		String localDC = PropertyHelper.getProperty("localdc", "Cassandra");
 		String remoteDC = PropertyHelper.getProperty("remotedc", "Analytics");
 
@@ -53,7 +54,7 @@ public class Main {
 		MovingAverage remoteMA = new MovingAverage(20);
 		
 		
-		String inputContent = FileUtils.readFileIntoString("solr.pdf");
+		String inputContent = FileUtils.readFileIntoString(FILE_NAME);
 		String base64String = "";
 		try {
 			base64String = BaseEncoding.base64().encode(inputContent.getBytes("UTF-8"));

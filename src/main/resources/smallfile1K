@@ -1,0 +1,38 @@
+CREATE KEYSPACE logging
+  WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'CW_CASS' : 1, 'SC_CASS' : 1, 'HADOOP' : 1};
+ 
+use logging;
+ 
+CREATE TABLE log_entries (
+    logGuid varchar,
+    logId timeuuid,
+    logClid varchar,
+    ip varchar,
+    hostName varchar,
+    appName varchar,
+    loggerName varchar,
+    level varchar,
+    className varchar,
+    fileName varchar,
+    lineNumber varchar,
+    methodName varchar,
+    message varchar,
+    mdc map<varchar,varchar>,
+    threadName varchar,
+    throwableString varchar,
+    logTimestamp timestamp,
+    PRIMARY KEY (logGuid, logId)
+);
+ 
+CREATE TABLE log_clid_guid (
+    logClid varchar,
+    logGuid varchar,
+    PRIMARY KEY (logClid, logGuid)
+);
+ 
+ 
+CREATE INDEX idx_level ON log_entries (level);
+ 
+CREATE INDEX idx_appName ON log_entries (appName);
+ 
+CREATE INDEX idx_hostName ON log_entries (hostName);
